@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="express.js"></script>
+    <script src="style.css"></script>
+
+
+    <style>
+        body {
+            background-color: lightblue;
+        }
+    </style>
+
+</head>
+<body x-data="pricePlans">
+    <div class="container mt-4">
+        <h2>Total phone bill price plans with SQLite</h2>
+        <br>
+        <table class="table table-bordered bg-light">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">Plan ID</th>
+                    <th scope="col">Price Plan</th>
+                    <th scope="col">SMS price</th>
+                    <th scope="col">Call price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="plan in myPlans">
+                    <tr class="bg-light">
+                        <td x-text="plan.id"></td>
+                        <td x-text="plan.plan_name"></td>
+                        <td x-text="plan.sms_price"></td>
+                        <td x-text="plan.call_price"></td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+
+        <h1>Phone Bill Calculator</h1>
+        <form id="phoneBillForm">
+            <label for="price_plan">Price Plan:</label>
+            <input type="text" id="price_plan" name="price_plan" required><br><br>
+
+            <label for="actions">Actions:</label>
+            <input type="text" id="actions" name="actions" required><br><br>
+
+            <button type="submit">Calculate Total</button>
+        </form>
+        <div id="result"></div>
+    </div>
+</body>
+</html>
