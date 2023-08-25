@@ -53,12 +53,12 @@
                 <button @click="showFirstSection = !showFirstSection" class="btn btn-primary mb-3"
                     x-text="showFirstSection ? 'Hide Widgets' : 'Show Widgets'"></button>
 
-                <div class="widget p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
+                <div class="container p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
                     x-transition:enter-start="slide-enter-from" x-transition:enter-end="slide-enter-to"
                     x-transition:leave="slide-leave-active" x-transition:leave-start="slide-leave-from"
                     x-transition:leave-end="slide-leave-to">
 
-                    <div class="widget p-4">
+                    <div class="container p-4">
                         <h3 class="mb-3">Calculate phone bills</h3>
                         <div x-show="billMessage.length > 0" class="message bg-light mb-3 p-3" x-text="billMessage">
                             Bill message will be displayed here....
@@ -78,7 +78,7 @@
                                 Bill</button>
                         </div>
                     </div>
-                    <div class="widget p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
+                    <div class="container p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
                         x-transition:enter-start="slide-enter-from" x-transition:enter-end="slide-enter-to"
                         x-transition:leave="slide-leave-active" x-transition:leave-start="slide-leave-from"
                         x-transition:leave-end="slide-leave-to">
@@ -106,7 +106,7 @@
                         </div>
                     </div>
 
-                    <div class="widget p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
+                    <div class="container p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
                         x-transition:enter-start="slide-enter-from" x-transition:enter-end="slide-enter-to"
                         x-transition:leave="slide-leave-active" x-transition:leave-start="slide-leave-from"
                         x-transition:leave-end="slide-leave-to">
@@ -134,7 +134,7 @@
                         </div>
                     </div>
 
-                    <div class="widget p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
+                    <div class="container p-4" x-show="showFirstSection" x-transition:enter="slide-enter-active"
                         x-transition:enter-start="slide-enter-from" x-transition:enter-end="slide-enter-to"
                         x-transition:leave="slide-leave-active" x-transition:leave-start="slide-leave-from"
                         x-transition:leave-end="slide-leave-to">
@@ -155,7 +155,7 @@
 
         <section>
             <footer class="text-center bg-dark text-light py-3">
-                <div class="container">
+                <div class="footer">
                     <div class="row">
                         <div class="col-md-6">
                             <h4>Contact Us</h4>
