@@ -1,98 +1,126 @@
 import express from 'express';
-import { getpricePlans } from './db.js';
+import * as sqlite from 'sqlite';
+import sqlite3 from 'sqlite3';
 
-// setup server
 const app = express();
-const PORT = process.env.PORT || 4011;
-app.listen(PORT, () => console.log(`Server started on port: ${PORT}`))
+app.use(express.static('public'));
+app.use(express.json());
 
-app.use(express.static('public'))
-app.use(express.json())
+const db = await sqlite.open({
+    filename: './data_plan.db',
+    driver: sqlite3.Database
+});
+console.log("db result");
+await db.migrate();
 
+app.post('/api/price_plan_update', async (req, res) => {
 
-app.post('/phonebill', async (req, res) => {
-    const pricePlan = req.body.pricePlan;
-    const actions = req.body.actions;
+    const sql = await db.get("SELECT * FROM price_plan WHERE plan_name = ?", req.body.plan_name);
 
-    const totalCost = 0;
+    if (sql) {
 
-    for (const action of actions) {
-        if (action === 'call') {
-            totalCost += pricePlan.call_price;
-        } else if (action === 'sms') {
-            totalCost += pricePlan.sms_price;
-        }
+        const { sms_price,
+            call_price,
+            plan_name } = req.body;
+
+        await db.run(`UPDATE price_plan SET sms_price = ?, call_price = ? WHERE plan_name = ?`,
+            sms_price,
+            call_price,
+            plan_name)
+
+        res.json({
+            status: `successfully updated the plan ${plan_name}`
+        })
     }
 
-    res.json({
-        total: totalCost
-    });
+    else {
+        res.json({
+            error: `Plan name ${req.body.plan_name} doesn't exist`
+        })
+    }
+
 });
 
-// route that return all the available price plans
-app.get('/api/price_plans/', async (req, res) => {
+app.post('/api/phonebill', async (req, res) => {
 
-    const pricePlans = await getpricePlans();
+    const price_plan_name = req.body.price_plan;
+
+    const price_plan = await db.get(`SELECT id, plan_name, sms_price, call_price
+    FROM price_plan WHERE plan_name = ?`, price_plan_name);
+
+    if (!price_plan) {
+        res.json({
+            error: `Invalid price plan name : ${price_plan_name}`
+        });
+    } else {
+
+        const activity = req.body.actions;
+
+        const activities = activity.split(",");
+
+        let total = 0;
+
+        activities.forEach(action => {
+            if (action.trim() === 'sms') {
+                total += price_plan.sms_price;
+            }
+            else if (action.trim() === 'call') {
+                total += price_plan.call_price;
+            }
+        });
+
+        res.json({
+            total: `R${total.toFixed(2)}`
+        });
+
+    }
+});
+
+app.post('/api/price_plan/create', async (req, res) => {
+
+    const sql = await db.get("SELECT * FROM price_plan WHERE plan_name = ?", req.body.plan_name);
+
+    if (sql) {
+        res.json({
+            error: "price plan already exists."
+        });
+    }
+    else {
+        await db.run("INSERT INTO price_plan (plan_name, sms_price, call_price) VALUES (?, ?, ?);", [req.body.plan_name, req.body.sms_price, req.body.call_price]);
+        res.json({
+            status: `Successfully created the ${req.body.plan_name} plan`
+        });
+    }
+});
+
+
+app.get('/api/price_plan', async (req, res) => {
+
+    const price_plans = await db.all(`SELECT * FROM price_plan`);
 
     res.json({
-        pricePlans: pricePlans
+        price_plans
     })
-    
 });
 
+app.post('/api/price_plan/delete', async (req, res) => {
 
-app.post("/api/phonebill/", async function (req, res) {
-    
-  
-    const price_plan_name = req.body.price_plan
-  
-    // get the price plan to use starts here
-    const price_plan = await db.get(`SELECT id, plan_name, sms_price, call_price 
-    FROM price_plan WHERE plan_name = ?`,price_plan_name);
-  
-    
-  
-    // Use the price plan to calculate the total cost starts here
-  
-    if(!price_plan){
-  
-      res.json({
-  
-        error: `Invalid price plan name: ${price_plan_name}`
-      })
-    }else{
-  
-      const activity = req.body.actions;
-  
-      const activities = activity.split(",");
-      let total = 0;
-    
-      activities.forEach((action) => {
-        if (action.trim() == "sms") {
-          total += price_plan.sms_price;
-        } else if (action.trim() == "call") {
-          total += price_plan.call_price;
-        }
-      });
-    
-      // Use the price plan to calculate the total cost ends here
-    
-      res.json({
-        // status: "Success",
-        total,
-      });
-      
+    const found = await db.get("SELECT * FROM price_plan WHERE plan_name = ?", req.body.plan_name);
+
+    if (found) {
+        await db.run("DELETE FROM price_plan WHERE plan_name=?", req.body.plan_name);
+
+        res.json({
+            status: `Successfully deleted the ${req.body.plan_name} plan`
+        });
     }
-  });
-
-// Calculate the most use and least
-  app.get('/api/usage_statistics', async (req, res) => {
-    try {
-        const mostUsed = await getMostUsedPricePlan();
-        const leastUsed = await getLeastUsedPricePlan();
-
-        res.json({ mostUsed, leastUsed });
-    } catch (error) {
-        res.status(500).json({ error: 'An error occurred while fetching usage statistics.' });
+    else {
+        res.json({
+            error: `Price plan ${req.body.plan_name} doesn't exist`
+        });
     }
+})
+const PORT = 4011;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
