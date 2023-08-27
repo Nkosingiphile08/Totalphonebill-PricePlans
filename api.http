@@ -1,3 +1,7 @@
+###
+GET https://phonebillpriceplan.onrender.com
+
+###
 POST http://localhost:4011/api/phonebill
 Content-Type: application/json
 
