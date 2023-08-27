@@ -1,6 +1,6 @@
 document.addEventListener('alpine:init', () => {
 
-    Alpine.data('totalphonebillWidget', () => {
+    Alpine.data('priceplansWidget', () => {
         return {
             plan: '',
             usage: '',
