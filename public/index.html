@@ -17,6 +17,7 @@
     <div x-data="priceplansWidget">
         <div class="container">
             <h1>Totalphonebill Price_Plans</h1>
+            <br>
             <section>
                 <div x-data>
                     <table class="table table-striped">
@@ -41,24 +42,28 @@
         </div>
         </section>
         <section>
-            <div class="container p-4">
-                <h3 class="mb-3">Calculate phone bills</h3>
-                <div x-show="billMessage.length > 0" class="message bg-light mb-3 p-3" x-text="billMessage">
-                    Bill message will be displayed here....
-                </div>
+            <div class="container p-4" x-data="phoneBillWidget()">
+                <h3 class="mb-3">Calculate Total Phone Bill</h3>
+                <form x-on:submit.prevent="phoneBill">
+                    <div class="mb-3">
+                        <label for="selectedName">Plan Name:</label>
+                        <input x-model="selectedName" type="text" id="selectedName" name="selectedName"
+                            class="form-control" placeholder="Enter an existing plan name">
+                    </div>
 
-                <div class="input mb-3">
-                    <label for="plan">Enter plan name:</label>
-                    <input type="text" class="form-control" placeholder="plan name" x-model="plan" id="plan">
-                </div>
+                    <div class="mb-3">
+                        <label for="actions">Actions:</label>
+                        <input x-model="actions" type="text" id="actions" name="actions" class="form-control"
+                            placeholder="Enter comma separated string (e.g., call,sms,call,sms)">
+                    </div>
 
-                <div class="input mb-3">
-                    <label for="usage">Enter bill usage:</label>
-                    <input type="text" class="form-control" placeholder="call, sms" x-model="usage" id="usage">
-                </div>
+                    <div class="mb-3">
+                        <button class="btn btn-success">Total</button>
+                    </div>
+                </form>
 
-                <div class="cont"><button class="btn btn-primary" x-on:click="calculateBill()">Calculate
-                        Bill</button>
+                <div>
+                    <label>Bill: R <span x-text="total"></span></label>
                 </div>
             </div>
             <div class="container p-4">
@@ -82,7 +87,7 @@
                         id="new_call_price">
                 </div>
 
-                <div class="cont"><button class="btn btn-primary" x-on:click="createPlan()">Create Plan</button>
+                <div class="cont"><button class="btn btn-success" x-on:click="createPlan()">Create Plan</button>
                 </div>
             </div>
 
@@ -107,7 +112,7 @@
                         id="updateCallPrice">
                 </div>
 
-                <div class="cont"><button class="btn btn-primary" x-on:click="updatePlan()">Update Plan</button>
+                <div class="cont"><button class="btn btn-success" x-on:click="updatePlan()">Update Plan</button>
                 </div>
             </div>
 
@@ -120,33 +125,25 @@
                         id="deletePlanName">
                 </div>
 
-                <div class="cont"><button class="btn btn-primary" x-on:click="deletePlan()">Delete Plan</button>
+                <div class="cont"><button class="btn btn-success" x-on:click="deletePlan()">Delete Plan</button>
                 </div>
-
             </div>
         </section>
-    </div>
-
-    <section>
-        <footer class="text-center bg-dark text-light py-3">
-            <div class="footer">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4>Contact Us</h4>
-                        <p>1746 Street, Greenvillage</p>
-                        <p>Email: info@totalphonebill.com</p>
-                        <p>Phone: (011)-557-4555</p>
+        <section>
+            <footer class="text-center bg-dark text-light py-3">
+                <div class="footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Contact Us</h4>
+                            <p>1746 Street, Greenvillage</p>
+                            <p>Email: info@totalphonebill.com</p>
+                            <p>Phone: (011)-557-4555</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <p class="mt-3">&copy; 2023 Totalphonebill. All rights reserved.</p>
-        </footer>
-    </section>
-    </div>
-
-</body>
-
-</html>
+                <p class="mt-3">&copy; 2023 Totalphonebill. All rights reserved.</p>
+            </footer>
+        </section>
 
 </body>
 

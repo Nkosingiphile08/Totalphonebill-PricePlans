@@ -16,5 +16,3 @@ insert into price_plan (plan_name, sms_price, call_price) values ('Sive', 1.55, 
 -- DELETE FROM price_plan WHERE id = 5
 insert into price_plan (plan_name, sms_price, call_price) values ('Sive', 1.55, 0.45);
 -- DELETE FROM price_plan WHERE id = 6
-
-    

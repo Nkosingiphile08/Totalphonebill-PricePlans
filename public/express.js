@@ -1,5 +1,4 @@
 document.addEventListener('alpine:init', () => {
-
     Alpine.data('priceplansWidget', () => {
         return {
             plan: '',
@@ -7,12 +6,14 @@ document.addEventListener('alpine:init', () => {
             new_plan_name: '',
             new_sms_price: '',
             new_call_price: '',
+            selectedName: "",
+            actions: "",
+            total: "",
             pricePlans: [],
             updatePlanName: '',
             updateSMSPrice: '',
             updateCallPrice: '',
             deletePlanName: '',
-            billMessage: '',
             myPlans: [],
             showTable: false,
             showFirstSection: false,
@@ -21,33 +22,41 @@ document.addEventListener('alpine:init', () => {
                 axios.get('/api/price_plan')
                     .then((result) => {
                         this.pricePlans = result.data.price_plans;
-
-                    }).catch((err) => {
-                        console.err("Cannot Get api/price_plan");
-
+                    })
+                    .catch((err) => {
+                        console.error("Cannot Get api/price_plan", err);
                     });
             },
 
-            calculateBill() {
-                axios.post('/api/phonebill', {
+            phoneBill() {
+                if (!this.selectedName || !this.actions) {
+                    alert("Please enter both plan name and actions.");
+                    return;
+                }
 
-                    price_plan: this.plan.toLowerCase(),
-                    actions: this.usage.toLowerCase()
+                axios.post('/api/price_plan/phonebill', {
+                    plan_name: this.selectedName,
+                    actions: this.actions
                 })
-                    .then((result) => {
-                        if (result.data.error) {
-                            alert(result.data.error);
+                    .then(result => {
+                        if (result.data.total) {
+                            this.total = result.data.total;
+                        } else {
+                            this.total = 'error calculating total';
                         }
-                        this.billMessage = result.data.total;
-                        setTimeout(() => {
-                            this.billMessage = '';
-                            this.plan = '';
-                            this.usage = '';
-                        }, 3000);
-
+                    })
+                    .catch(error => {
+                        this.total = 'error calculating total';
+                        console.error(error);
                     });
 
-            },
+                // Clear inputs after 3 seconds
+                setTimeout(() => {
+                    this.selectedName = '';
+                    this.actions = '';
+                    this.total = '';
+                }, 3000);
+            }, 
 
             createPlan() {
                 axios.post("/api/price_plan/create", {
@@ -76,7 +85,7 @@ document.addEventListener('alpine:init', () => {
                         }
                     });
             },
-
+            
             updatePlan() {
                 axios.post("/api/price_plan_update", {
 
